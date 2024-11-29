@@ -1,0 +1,36 @@
+version: '3'
+services:
+  todo-db:
+    image: mongo:latest
+    container_name: todo-db
+    volumes:
+      - todo-db-data:/data/db
+    networks:
+      - todo-net
+
+  todo-backend:
+    build: ./backend
+    container_name: todo-backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - todo-db
+    networks:
+      - todo-net
+
+  todo-frontend:
+    image: nginx:latest
+    container_name: todo-frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    networks:
+      - todo-net
+
+volumes:
+  todo-db-data:
+
+networks:
+  todo-net:
+    driver: bridge
